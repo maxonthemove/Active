@@ -9,13 +9,37 @@
     <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
 
     <!-- 允许程序打开网络套接字(Allows applications to open network sockets) -->
-    <uses-permission android:name="android.permission.INTERNET" />
 
     <!--&lt;!&ndash; 允许一个程序打开窗口使用 TYPE_SYSTEM_ALERT，显示在其他所有程序的顶层(Allows an application to open windows using the Type TYPE_SYSTEM_ALERT, shown on top of all other applications. ) &ndash;&gt;-->
     <!--<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
 
     <!-- 允许程序访问有关GSM网络信息(Allows applications to access information about networks) -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!--连接网络权限，用于执行云端语音能力 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!--获取手机录音机使用权限，听写、识别、语义理解需要用到此权限 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!--读取网络信息状态 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!--获取当前wifi状态 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <!--允许程序改变网络连接状态 -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <!--读取手机信息权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <!--读取联系人权限，上传联系人需要用到此权限 -->
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <!--外存储写权限，构建语法需要用到此权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!--外存储读权限，构建语法需要用到此权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!--配置权限，用来记录应用配置信息 -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <!--手机定位信息，用来为语义等功能提供定位，提供更精准的服务-->
+    <!--定位信息是敏感信息，可通过Setting.setLocationEnable(false)关闭定位请求 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!--如需使用人脸识别，还要添加：摄相头权限，拍照需要用到 -->
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <!-- 允许访问振动设备(Allows access to the vibrator) -->
     <!--<uses-permission android:name="android.permission.VIBRATE" />-->
@@ -54,7 +78,7 @@
     <!--<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />-->
 
     <!-- 允许程序访问Wi-Fi网络状态信息 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
 
     <!--&lt;!&ndash; 允许一个程序修改当前设置，如本地化 &ndash;&gt;-->
     <!--<uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />-->
