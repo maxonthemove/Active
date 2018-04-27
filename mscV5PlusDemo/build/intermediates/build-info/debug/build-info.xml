@@ -6,7 +6,7 @@
     density="xxhdpi"
     format="10"
     plugin-version="3.0.1"
-    timestamp="1524840129768"
+    timestamp="1524844564950"
     token="-4370054898378030014"
     verifier="FULL_BUILD_REQUESTED" >
 
@@ -62,7 +62,7 @@
 
     <build
         build-mode="FULL"
-        timestamp="1524840129768"
+        timestamp="1524844564950"
         verifier="FULL_BUILD_REQUESTED" >
         <artifact
             location="E:\Project\GitHub\Active\mscV5PlusDemo\build\intermediates\split-apk\debug\slices\slice_4.apk"

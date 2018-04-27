@@ -27,6 +27,11 @@ android {
         mavenCentral()
         maven { url "https://jitpack.io" }
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {

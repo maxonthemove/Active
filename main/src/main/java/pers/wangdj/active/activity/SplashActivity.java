@@ -1,10 +1,14 @@
 package pers.wangdj.active.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.widget.TextView;
 
 import pers.wangdj.active.R;
@@ -94,4 +98,6 @@ public class SplashActivity extends BaseActivity {
     public void onBackPressed() {
 //        super.onBackPressed();
     }
+
+
 }

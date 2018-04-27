@@ -182,3 +182,7 @@ uses-permission#android.permission.BROADCAST_STICKY
 ADDED from E:\Project\GitHub\Active\mscV5PlusDemo\src\main\AndroidManifest.xml:76:5-75
 	android:name
 		ADDED from E:\Project\GitHub\Active\mscV5PlusDemo\src\main\AndroidManifest.xml:76:22-72
+uses-permission#android.permission.GET_TASKS
+ADDED from E:\Project\GitHub\Active\mscV5PlusDemo\src\main\AndroidManifest.xml:77:5-68
+	android:name
+		ADDED from E:\Project\GitHub\Active\mscV5PlusDemo\src\main\AndroidManifest.xml:77:22-65
