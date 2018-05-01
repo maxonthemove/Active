@@ -1,7 +1,12 @@
 package pers.wangdj.active.activity.demo;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -11,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +36,7 @@ import org.json.JSONObject;
 import pers.wangdj.active.R;
 import pers.wangdj.active.activity.pub.BaseActivity;
 import pers.wangdj.active.utils.Constants;
+import pers.wangdj.active.utils.NotificationUtil;
 
 /**
  * 项目名：  AndroidCommonProject
@@ -47,10 +54,15 @@ public class DemoActivity extends BaseActivity implements View.OnClickListener {
     protected Button btnDemoButtonForResult;
     private String ivwNetMode = "0";
     // 语音唤醒对象
-    private VoiceWakeuper mIvw;
+    public static VoiceWakeuper mIvw;
     private String keep_alive = "1";
-    private String threshStr = "门限值：";
     private int curThresh = 20;
+    private int num = 0;
+    private NotificationUtil notificationUtil;//通知 工具类
+    private boolean isActive = false;
+    private LocalBroadcastManager localBroadcastManager;
+    private LocalReceiver localReceiver;
+    private IntentFilter intentFilter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,12 +71,22 @@ public class DemoActivity extends BaseActivity implements View.OnClickListener {
         initView();
         initListener();
         initData();
+        initBroadcast();
         // 初始化唤醒对象
         mIvw = VoiceWakeuper.createWakeuper(this, null);
 
         requestPermissions();
 
     }
+
+    private void initBroadcast() {
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        intentFilter = new IntentFilter();
+        intentFilter.addAction("notification_clicked_local");
+        localReceiver = new LocalReceiver();
+        localBroadcastManager.registerReceiver(localReceiver,intentFilter);
+    }
+
 
     private void requestPermissions() {
         try {
@@ -109,13 +131,14 @@ public class DemoActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btn_demo_button) {
+
 //            startActivity(actionStart("464655465555", "2641"));
-            startWakeUper();
-            showToast("语音唤醒已开启", true);
+            startWakeUper(true);
+
         } else if (view.getId() == R.id.btn_demo_button_for_result) {
 //            startActivityForResult(actionStartForResult("464655465555", "2641"), Constants.requestCode350);
-            mIvw.stopListening();
-            showToast("语音唤醒已关闭", true);
+            shutDownWakeUper();
+
         }
     }
 
@@ -141,7 +164,7 @@ public class DemoActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    public void startWakeUper() {
+    public void startWakeUper(boolean sendNotification) {
         //非空判断，防止因空指针使程序崩溃
         mIvw = VoiceWakeuper.getWakeuper();
         if (mIvw != null) {
@@ -169,6 +192,11 @@ public class DemoActivity extends BaseActivity implements View.OnClickListener {
 
             // 启动唤醒
             mIvw.startListening(mWakeuperListener);
+            isActive = true;
+            if(sendNotification){
+                notificationUtil = new NotificationUtil(this);
+                notificationUtil.sendNotification("语音唤醒","语音唤醒已开启，点击关闭");
+            }
         } else {
             showToast("唤醒未初始化");
         }
@@ -176,8 +204,8 @@ public class DemoActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "DemoActivity";
 
-    //关闭唤醒
-    public void shutDownWakeUper() {
+    //暂时关闭唤醒
+    public void shutDownWakeUperForSomeTime() {
         mIvw.stopListening();
         new Thread(new Runnable() {
             @Override
@@ -187,12 +215,19 @@ public class DemoActivity extends BaseActivity implements View.OnClickListener {
                         Thread.sleep(3000);
                         Log.d(TAG, "run:休眠 3s ");
                     } while (!validateMicAvailability());
-                    startWakeUper();
+                    startWakeUper(false);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
+    }
+
+    public void shutDownWakeUper(){
+        mIvw.stopListening();
+        isActive = false;
+        notificationUtil = new NotificationUtil(this);
+        notificationUtil.sendNotification("语音唤醒","语音唤醒已关闭，点击开启");
     }
 
     private WakeuperListener mWakeuperListener = new WakeuperListener() {
@@ -218,7 +253,7 @@ public class DemoActivity extends BaseActivity implements View.OnClickListener {
                 buffer.append("\n");
                 buffer.append("【尾端点】" + object.optString("eos"));
                 //关闭监听
-                shutDownWakeUper();
+                shutDownWakeUperForSomeTime();
                 //唤醒成功
                 Intent intent = getPackageManager().getLaunchIntentForPackage("com.miui.voiceassist");
                 if (intent != null) {
@@ -266,7 +301,7 @@ public class DemoActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy WakeDemo");
+        localBroadcastManager.unregisterReceiver(localReceiver);
 //        // 销毁合成对象
 //        mIvw = VoiceWakeuper.getWakeuper();
 //        if (mIvw != null) {
@@ -311,5 +346,18 @@ public class DemoActivity extends BaseActivity implements View.OnClickListener {
         return available;
     }
 
+    class LocalReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+//            showToast("收到了通知");
+            if(isActive){
+                //开启状态，关闭
+                shutDownWakeUper();
+            }else {
+                startWakeUper(true);
+            }
+        }
+    }
 
 }
